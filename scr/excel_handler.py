@@ -1,6 +1,7 @@
 # src/excel_handler.py
 
 import pandas as pd
+import io
 
 def cargar_datos(archivo):
     """
@@ -15,9 +16,13 @@ def cargar_datos(archivo):
 
 def guardar_datos(df):
     """
-    Guarda los datos procesados en un archivo Excel nuevo.
+    Guarda los datos procesados en un archivo Excel y devuelve el archivo en formato bytes.
     """
     try:
-        df.to_excel('nomina_calculada.xlsx', index=False)
+        # Guardar el DataFrame en un buffer de memoria (en lugar de un archivo en disco)
+        output = io.BytesIO()
+        df.to_excel(output, index=False, engine='openpyxl')
+        output.seek(0)
+        return output.getvalue()  # Retorna el archivo Excel en formato bytes
     except Exception as e:
         raise Exception(f"Error al guardar el archivo Excel: {e}")
